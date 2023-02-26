@@ -1,0 +1,14 @@
+{
+  "name": "dejun-blog-server",
+  "version": "1.0.0",
+  "description": "dejun's personal blog server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dejunqi2008@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "express-generator": "^4.2.0"
+  }
+}
