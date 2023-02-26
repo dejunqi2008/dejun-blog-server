@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blog detail</title>
+    <style type="text/css">
+        body {
+            margin: 0 20px;
+            line-height: 1;
+        }
+        a {
+            text-decoration-line: none;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .info-container span,
+        .info-container a {
+            font-size: 14px;
+            color: #999;
+        }
+        .content-wrapper {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title" class="title"></h1>
+    <div id="info-container" class="info-container"></div>
+    <div class="content-wrapper">
+        <p id="content"></p>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+    <script>
+        const baseUrl = 'http://localhost:8000';
+
+        function get(url) {
+            return $.get(baseUrl + url)
+        }
+
+
+        function getFormatDate(dt) {
+            return moment(dt).format('LL')
+        }
+
+        function getUrlParams() {
+            let paramStr = location.href.split('?')[1] || ''
+            paramStr = paramStr.split('#')[0]
+            const result = {}
+            paramStr.split('&').forEach(itemStr => {
+                const arr = itemStr.split('=')
+                const key = arr[0]
+                const val = arr[1]
+                result[key] = val
+            })
+            return result
+        }
+
+        const $title = $('#title')
+        const $infoContainer = $('#info-container')
+        const $content = $('#content')
+
+        const urlParams = getUrlParams()
+        const url = '/api/blog/detail?id=' + urlParams.id
+        get(url).then(res => {
+            console.log(res);
+            if (res.errno !== 0) {
+                alert('Something went wrong')
+                return
+            }
+            const {data} = res;
+            if (!data) return;
+            $title.text(data.title)
+            $content.text(data.content)
+            $infoContainer.append($(`
+                <span>
+                    <a href="/index.html?author=${data.author}">${data.author}</a>
+                </span>
+                <span>${getFormatDate(data.createtime)}</span>
+            `))
+        })
+    </script>
+</body>
+</html>

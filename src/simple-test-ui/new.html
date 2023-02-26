@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Create new blog</title>
+    <style type="text/css">
+        body {
+            margin: 0 20px;
+            line-height: 1;
+        }
+        a {
+            text-decoration-line: none;
+        }
+        .title-wrapper {
+            margin-bottom: 10px;
+        }
+        .title-wrapper input {
+            width: 300px;
+        }
+        .content-wrapper textarea {
+            width: 300px;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">Create a new blog</h1>
+    <div>
+        <div class="title-wrapper">
+            <input id="text-title">
+        </div>
+        <div class="content-wrapper">
+            <textarea id="text-content"></textarea>
+        </div>
+        <div>
+            <button id="btn-create">Create</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script>
+        const baseUrl = 'http://localhost:8000';
+
+        function post(url, data = {}) {
+            url = baseUrl + url;
+            return $.ajax({
+                type: 'post',
+                url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                xhrFields: {
+                    withCredentials: true,
+                }
+            })
+        }
+
+
+        $textTitle = $('#text-title')
+        $textContent = $('#text-content')
+        $btnCreate = $('#btn-create')
+
+        $btnCreate.click(() => {
+            const title = $textTitle.val().trim()
+            const content = $textContent.val().trim()
+            if (title === '' || content === '') {
+                alert('title and content can not be empty')
+                return
+            }
+
+            const url = '/api/blog/new'
+            const data = {
+                title,
+                content
+            }
+            post(url, data).then(res => {
+                console.log('res: ', res);
+                if (res.errno !== 0) {
+                    alert('soemthing went wrong')
+                    return
+                }
+                alert('Success')
+                location.href = '/admin.html'
+            })
+        })
+
+    </script>
+</body>
+</html>
