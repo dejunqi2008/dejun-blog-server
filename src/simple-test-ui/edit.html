@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit blog</title>
+    <style type="text/css">
+        body {
+            margin: 0 20px;
+            line-height: 1;
+        }
+        a {
+            text-decoration-line: none;
+        }
+        .title-wrapper {
+            margin-bottom: 10px;
+        }
+        .title-wrapper input {
+            width: 300px;
+        }
+        .content-wrapper textarea {
+            width: 300px;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">Edit</h1>
+    <div>
+        <div class="title-wrapper">
+            <input id="text-title">
+        </div>
+        <div class="content-wrapper">
+            <textarea id="text-content"></textarea>
+        </div>
+        <div>
+            <button id="btn-update">保存</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script>
+        const baseUrl = 'http://localhost:8000';
+
+        function get(url) {
+            return fetch(baseUrl + url, {
+                method: 'GET',
+                credentials: 'include'
+            })
+        }
+
+        function post(url, data = {}) {
+            url = baseUrl + url;
+            return $.ajax({
+                type: 'post',
+                url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                xhrFields: {
+                    withCredentials: true,
+                }
+            })
+        }
+
+        function getUrlParams() {
+            let paramStr = location.href.split('?')[1] || ''
+            paramStr = paramStr.split('#')[0]
+            const result = {}
+            paramStr.split('&').forEach(itemStr => {
+                const arr = itemStr.split('=')
+                const key = arr[0]
+                const val = arr[1]
+                result[key] = val
+            })
+            return result
+        }
+
+        const $textTitle = $('#text-title')
+        const $textContent = $('#text-content')
+        const $btnUpdate = $('#btn-update')
+
+        const urlParams = getUrlParams()
+        const url = '/api/blog/detail?id=' + urlParams.id
+        // get(url).then(res => {
+        //     if (res.errno !== 0) {
+        //         alert('Something went wrong')
+        //         return
+        //     }
+
+
+        //     const data = res.data || {}
+        //     $textTitle.val(data.title)
+        //     $textContent.val(data.content)
+        //     $btnUpdate.attr('data-id', data.id || data._id)
+        // })
+        get(url)
+        .then(resp => resp.json())
+        .then(jsonData => {
+            console.log(jsonData);
+            const { data } = jsonData;
+            $textTitle.val(data.title)
+            $textContent.val(data.content)
+            $btnUpdate.attr('data-id', data.id || data._id)
+        })
+        .catch(err => console.error(err));
+
+
+        $btnUpdate.click(function () {
+            const $this = $(this)
+            const id = $this.attr('data-id')
+            const title = $textTitle.val()
+            const content = $textContent.val()
+
+            const url = '/api/blog/update?id=' + id
+            const data = {
+                title,
+                content
+            }
+            post(url, data).then(res => {
+                if (res.errno !== 0) {
+                    alert('Something went wrong')
+                    return
+                }
+                alert('Update success')
+                location.href = '/admin.html'
+            })
+        })
+
+    </script>
+</body>
+</html>

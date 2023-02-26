@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin page</title>
+    <style type="text/css">
+        body {
+            margin: 0 20px;
+            line-height: 1;
+        }
+        a {
+            text-decoration-line: none;
+            cursor: pointer;
+        }
+        table {
+            border: 1px solid #ccc;
+        }
+        table th {
+            text-align: left;
+            background-color: #f1f1f1;
+        } 
+        table td:nth-child(1) {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">Admin</h1>
+    <p>
+        <a href="/new.html">Create a new blog</a>
+    </p>
+    <div style="margin-bottom: 10px;">
+        <input id="text-keyword">
+        <button id="btn-search">Search</button>
+    </div>
+    <table id="table-container">
+        <tr>
+            <th>Title</th>
+            <th colspan="2">Operation</th>
+        </tr>
+    </table>
+
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <script>
+        const baseUrl = 'http://localhost:8000';
+        function get(url) {
+            return fetch(baseUrl + url, {
+                method: 'GET',
+                credentials: 'include'
+            })
+        }
+
+
+        function post(url, data = {}) {
+            url = baseUrl + url;
+            return $.ajax({
+                type: 'post',
+                url,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                xhrFields: {
+                    withCredentials: true,
+                }
+            })
+        }
+
+
+        function getUrlParams() {
+            let paramStr = location.href.split('?')[1] || ''
+            paramStr = paramStr.split('#')[0]
+            const result = {}
+            paramStr.split('&').forEach(itemStr => {
+                const arr = itemStr.split('=')
+                const key = arr[0]
+                const val = arr[1]
+                result[key] = val
+            })
+            return result
+        }
+
+
+        const $textKeyword = $('#text-keyword')
+        const $btnSearch = $('#btn-search')
+        const $tableContainer = $('#table-container')
+
+
+        let url = '/api/blog/list?isadmin=1'  // need to check with back end as well (bad design, need better solution)
+        const urlParams = getUrlParams()
+        if (urlParams.keyword) {
+            url += '&keyword=' + urlParams.keyword
+        }
+
+        get(url)
+            .then(resp => resp.json())
+            .then(response => {
+                console.log(response)
+                response.data.forEach(item => {
+                    $tableContainer.append($(`
+                        <tr>
+                            <td>
+                                <a href="/detail.html?id=${item.id || item._id}" target="_blank">${item.title}</a>
+                            </td>
+                            <td>
+                                <a href="/edit.html?id=${item.id || item._id}">Edit</a>
+                            </td>
+                            <td>
+                                <a data-id="${item.id || item._id}" class="item-del">Delete</a>
+                            </td>
+                        </tr>
+                    `))
+                })
+
+            })
+            .catch(err => alert(err));
+
+        // 搜索
+        $btnSearch.click(() => {
+            const keyword = $textKeyword.val()
+            location.href = '/admin.html?keyword=' + keyword
+        })
+
+        // 删除
+        $tableContainer.click(e => {
+            const $target = $(e.target)
+            if ($target.hasClass('item-del') === false) {
+                return
+            }
+
+            if (confirm('Confirm delete')) {
+                const url = '/api/blog/delete?id=' + $target.attr('data-id')
+                post(url).then(res => {
+                    if (res.errno !== 0) {
+                        alert('Error')
+                        return
+                    }
+                    location.href = location.href
+                })
+            }
+        })
+
+    </script>
+</body>
+</html>
