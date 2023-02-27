@@ -16,6 +16,19 @@ const redisClient = require('./src/db/redis');
 
 const app = express();
 
+
+/* To resolve lost session issue, in the fron end we have to fetch ajax with this way in the post request
+function post(url, data = {}) {
+    return $.ajax({
+        type: 'post',
+        ...
+        xhrFields: {
+            withCredentials: true, // This is the key
+        }
+    })
+}
+
+*/
 app.use(cors({
     origin: whitelistDomains,
     methods: whitelistMethods,

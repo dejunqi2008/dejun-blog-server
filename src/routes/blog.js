@@ -1,4 +1,6 @@
 const express = require('express');
+const router = express.Router();
+
 const {
     getList,
     getDetail,
@@ -7,12 +9,9 @@ const {
     delBlog
 } = require('../controller/blog');
 const redisClient = require('../db/redis');
-
 const { SuccessModel, ErrorModel } = require('../model/resModel');
+const  loginCheck  = require('../middlewares/loginCheck');
 
-const router = express.Router();
-
-/* GET post */
 
 router.get('/list', (req, res, next) => {
 
@@ -21,7 +20,6 @@ router.get('/list', (req, res, next) => {
     console.log('get/list - req.session: ---- ', req.session);
     if (req.query.isadmin) {
         if (!req.session.username) {
-            console.log('blog/list -- req.session ', req.session);
             return res.json(new ErrorModel('You are not login yet.'));
         }
         author = req.session.username;
@@ -34,10 +32,16 @@ router.get('/list', (req, res, next) => {
 });
 
 router.get('/detail', (req, res, next) => {
-    res.json({
-        errno: 0,
-        data: 'ok'
+    const result = getDetail(req.query.id);
+    return result.then(data => {
+        res.json(new SuccessModel(data));
     });
+});
+
+router.post('/new', loginCheck, (req, res, next) => {
+    req.body.author = req.session.username;
+    const result = newBlog(req.body);
+    return result.then(data => res.json(new SuccessModel(data)));
 })
 
 module.exports = router;
