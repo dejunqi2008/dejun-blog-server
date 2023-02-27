@@ -18,7 +18,8 @@ const app = express();
 
 app.use(cors({
     origin: whitelistDomains,
-    methods: whitelistMethods
+    methods: whitelistMethods,
+    credentials: true
 }));
 app.use(logger('dev'));
 app.use(express.json()); // requestion information are converted to json into body

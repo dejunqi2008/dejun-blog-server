@@ -6,6 +6,7 @@ const {
     updateBlog,
     delBlog
 } = require('../controller/blog');
+const redisClient = require('../db/redis');
 
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 
@@ -19,12 +20,8 @@ router.get('/list', (req, res, next) => {
     const keyword = req.query.keyword || '';
     console.log('get/list - req.session: ---- ', req.session);
     if (req.query.isadmin) {
-    //     const loginCheckResult = loginCheck(req);
-    //     if (loginCheckResult) {
-    //         return loginCheckResult;
-    //     }
         if (!req.session.username) {
-            // 使用redist get session 查看
+            console.log('blog/list -- req.session ', req.session);
             return res.json(new ErrorModel('You are not login yet.'));
         }
         author = req.session.username;

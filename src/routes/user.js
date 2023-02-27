@@ -9,13 +9,8 @@ router.post('/login', (req, res, next) => {
     
     return result.then(data => {
         if (data.username) {
-            console.log('login success ---- ', req.sessionID);
-            // 
-
-
             req.session.username = data.username;
             req.session.realname = data.realname;
-            console.log('after write session ---- ', req.session);
             return res.json(new SuccessModel());
         }
         console.log('login failed')
