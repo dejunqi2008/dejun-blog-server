@@ -6,11 +6,13 @@ const logger = require('morgan');
 const session = require('express-session')
 const cors = require('cors');
 
+const RedisStore  = require('connect-redis')(session);
 
 
 const blogRouter = require('./src/routes/blog');
 const userRouter = require('./src/routes/user');
 const { whitelistDomains, whitelistMethods } = require('./src/utils/corsUtil');
+const redisClient = require('./src/db/redis');
 
 const app = express();
 
@@ -22,13 +24,19 @@ app.use(logger('dev'));
 app.use(express.json()); // requestion information are converted to json into body
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+const sessionStore = new RedisStore({ client: redisClient })
+
 app.use(session({
     secret: 'jwo$%#$Apq',
     cookie: {
         path: '/', // default
         httpOnly: true, // default
         maxAge: 24 * 60 * 60 * 1000
-    }
+    },
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
 }))
 
 

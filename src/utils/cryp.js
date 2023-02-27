@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 
 
-const SECRET_KEY = 'WJiol_8776#'
+const SECRET_KEY = 'glory_to_Ukraine!'
 
 
 function md5(content) {
