@@ -17,6 +17,18 @@ router.get('/list', (req, res, next) => {
 
     let author = req.query.author || '';
     const keyword = req.query.keyword || '';
+    console.log('get/list - req.session: ---- ', req.session);
+    if (req.query.isadmin) {
+    //     const loginCheckResult = loginCheck(req);
+    //     if (loginCheckResult) {
+    //         return loginCheckResult;
+    //     }
+        if (!req.session.username) {
+            // 使用redist get session 查看
+            return res.json(new ErrorModel('You are not login yet.'));
+        }
+        author = req.session.username;
+    }
 
     const result = getList(author, keyword);
     return result.then(listData => {

@@ -28,7 +28,7 @@ app.use(cookieParser());
 const sessionStore = new RedisStore({ client: redisClient })
 
 app.use(session({
-    secret: 'jwo$%#$Apq',
+    secret: 'WJiol#23123',
     cookie: {
         path: '/', // default
         httpOnly: true, // default
