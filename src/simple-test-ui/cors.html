@@ -9,12 +9,11 @@
 </head>
 
 <body>
-    <p>CORS test - 查看网络请求</p>
+    <p>CORS test - request</p>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script>
 
-        // 跨域请求
         $.get('http://localhost:8000/', res => {
             console.log('res', res)
         })

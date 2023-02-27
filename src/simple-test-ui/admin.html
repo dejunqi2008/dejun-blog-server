@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>管理中心</title>
+    <title>Admin page</title>
     <style type="text/css">
         body {
             margin: 0 20px;
@@ -27,25 +27,24 @@
     </style>
 </head>
 <body>
-    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">管理中心</h1>
+    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">Admin</h1>
     <p>
-        <a href="/new.html">新建博客</a>
+        <a href="/new.html">Create a new blog</a>
     </p>
     <div style="margin-bottom: 10px;">
         <input id="text-keyword">
-        <button id="btn-search">搜索</button>
+        <button id="btn-search">Search</button>
     </div>
     <table id="table-container">
         <tr>
-            <th>博客标题</th>
-            <th colspan="2">操作</th>
+            <th>Title</th>
+            <th colspan="2">Operation</th>
         </tr>
     </table>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script>
         const baseUrl = 'http://localhost:8000';
-        // 发送 get 请求
         function get(url) {
             return fetch(baseUrl + url, {
                 method: 'GET',
@@ -53,7 +52,7 @@
             })
         }
 
-        // 发送 post 请求
+
         function post(url, data = {}) {
             url = baseUrl + url;
             return $.ajax({
@@ -67,7 +66,7 @@
             })
         }
 
-        // 获取 url 参数
+
         function getUrlParams() {
             let paramStr = location.href.split('?')[1] || ''
             paramStr = paramStr.split('#')[0]
@@ -81,19 +80,18 @@
             return result
         }
 
-        // 获取 dom 元素
+
         const $textKeyword = $('#text-keyword')
         const $btnSearch = $('#btn-search')
         const $tableContainer = $('#table-container')
 
-        // 拼接接口 url
-        let url = '/api/blog/list?isadmin=1'  // 增加一个 isadmin=1 参数，使用登录者的用户名，后端也需要修改 ！！！
+
+        let url = '/api/blog/list?isadmin=1'  // need to check with back end as well (bad design, need better solution)
         const urlParams = getUrlParams()
         if (urlParams.keyword) {
             url += '&keyword=' + urlParams.keyword
         }
 
-        // 加载数据
         get(url)
             .then(resp => resp.json())
             .then(response => {
@@ -105,10 +103,10 @@
                                 <a href="/detail.html?id=${item.id || item._id}" target="_blank">${item.title}</a>
                             </td>
                             <td>
-                                <a href="/edit.html?id=${item.id || item._id}">编辑</a>
+                                <a href="/edit.html?id=${item.id || item._id}">Edit</a>
                             </td>
                             <td>
-                                <a data-id="${item.id || item._id}" class="item-del">删除</a>
+                                <a data-id="${item.id || item._id}" class="item-del">Delete</a>
                             </td>
                         </tr>
                     `))
@@ -130,11 +128,11 @@
                 return
             }
 
-            if (confirm('确定删除？')) {
-                const url = '/api/blog/del?id=' + $target.attr('data-id')
+            if (confirm('Confirm delete')) {
+                const url = '/api/blog/delete?id=' + $target.attr('data-id')
                 post(url).then(res => {
                     if (res.errno !== 0) {
-                        alert('操作错误')
+                        alert('Error')
                         return
                     }
                     location.href = location.href

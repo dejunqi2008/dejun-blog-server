@@ -11,7 +11,6 @@ const getList = (author, keyword) => {
     }
     sql += `order by createtime desc;`
 
-    // 返回 promise
     return exec(sql)
 }
 
@@ -23,7 +22,6 @@ const getDetail = (id) => {
 }
 
 const newBlog = (blogData = {}) => {
-    // blogData 是一个博客对象，包含 title content author 属性
     const title = xss(blogData.title)
     // console.log('title is', title)
     const content = xss(blogData.content)
@@ -44,14 +42,12 @@ const newBlog = (blogData = {}) => {
 }
 
 const updateBlog = (id, blogData = {}) => {
-    // id 就是要更新博客的 id
-    // blogData 是一个博客对象，包含 title content 属性
 
     const title = xss(blogData.title)
     const content = xss(blogData.content)
 
     const sql = `
-        update blogs set title='${title}', content='${content}' where id=${id}
+        UPDATE blogs SET title='${title}', content='${content}' WHERE id=${id}
     `
 
     return exec(sql).then(updateData => {
@@ -64,8 +60,8 @@ const updateBlog = (id, blogData = {}) => {
 }
 
 const delBlog = (id, author) => {
-    // id 就是要删除博客的 id
-    const sql = `delete from blogs where id='${id}' and author='${author}';`
+    const sql = `DELETE FROM blogs WHERE id='${id}' AND author='${author}';`
+    console.log(sql)
     return exec(sql).then(delData => {
         // console.log('delData is ', delData)
         if (delData.affectedRows > 0) {

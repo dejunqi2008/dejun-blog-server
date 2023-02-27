@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>创建博客</title>
+    <title>Create new blog</title>
     <style type="text/css">
         body {
             margin: 0 20px;
@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">创建博客</h1>
+    <h1 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">Create a new blog</h1>
     <div>
         <div class="title-wrapper">
             <input id="text-title">
@@ -35,14 +35,14 @@
             <textarea id="text-content"></textarea>
         </div>
         <div>
-            <button id="btn-create">创建</button>
+            <button id="btn-create">Create</button>
         </div>
     </div>
 
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
     <script>
         const baseUrl = 'http://localhost:8000';
-        // 发送 post 请求
+
         function post(url, data = {}) {
             url = baseUrl + url;
             return $.ajax({
@@ -56,7 +56,7 @@
             })
         }
 
-        // 获取 dom 元素
+
         $textTitle = $('#text-title')
         $textContent = $('#text-content')
         $btnCreate = $('#btn-create')

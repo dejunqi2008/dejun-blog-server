@@ -17,7 +17,7 @@ router.get('/list', (req, res, next) => {
 
     let author = req.query.author || '';
     const keyword = req.query.keyword || '';
-    console.log('get/list - req.session: ---- ', req.session);
+    // console.log('get/list - req.session: ---- ', req.session);
     if (req.query.isadmin) {
         if (!req.session.username) {
             return res.json(new ErrorModel('You are not login yet.'));
@@ -43,5 +43,19 @@ router.post('/new', loginCheck, (req, res, next) => {
     const result = newBlog(req.body);
     return result.then(data => res.json(new SuccessModel(data)));
 })
+
+router.post('/update', loginCheck, (req, res, next) => {
+    const resp = updateBlog(req.query.id, req.body);
+    return resp.then(val => {
+        return !!val ? res.json(new SuccessModel()) : res.json(new ErrorModel('Error'));
+    })
+});
+
+router.post('/delete', loginCheck, (req, res, next) => {
+    const resp = delBlog(req.query.id, req.session.username);
+    return resp.then(val => {
+        return !!val ? res.json(new SuccessModel()) : res.json(new ErrorModel('Error'));
+    });
+});
 
 module.exports = router;
