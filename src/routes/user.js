@@ -8,6 +8,7 @@ router.post('/login', (req, res, next) => {
     const result = login(username, password);
     
     return result.then(data => {
+        console.log(data);
         if (data.username) {
             req.session.username = data.username;
             req.session.realname = data.realname;

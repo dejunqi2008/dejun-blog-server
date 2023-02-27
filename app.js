@@ -3,15 +3,21 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
 const session = require('express-session')
+const cors = require('cors');
 
 
-const blogRouter = require('./routes/blog');
-const userRouter = require('./routes/user');
+
+const blogRouter = require('./src/routes/blog');
+const userRouter = require('./src/routes/user');
+const { whitelistDomains, whitelistMethods } = require('./src/utils/corsUtil');
 
 const app = express();
 
+app.use(cors({
+    origin: whitelistDomains,
+    methods: whitelistMethods
+}));
 app.use(logger('dev'));
 app.use(express.json()); // requestion information are converted to json into body
 app.use(express.urlencoded({ extended: false }));
@@ -43,7 +49,10 @@ app.use(function(err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.status(500).json({
+        error: err,
+        message: err.message
+    });
 });
 
 module.exports = app;
