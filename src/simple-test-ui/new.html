@@ -61,12 +61,11 @@
         $textContent = $('#text-content')
         $btnCreate = $('#btn-create')
 
-        // 提交数据
         $btnCreate.click(() => {
             const title = $textTitle.val().trim()
             const content = $textContent.val().trim()
             if (title === '' || content === '') {
-                alert('标题或内容不能为空')
+                alert('title and content can not be empty')
                 return
             }
 
@@ -76,11 +75,12 @@
                 content
             }
             post(url, data).then(res => {
+                console.log('res: ', res);
                 if (res.errno !== 0) {
-                    alert('操作错误')
+                    alert('soemthing went wrong')
                     return
                 }
-                alert('创建成功')
+                alert('Success')
                 location.href = '/admin.html'
             })
         })

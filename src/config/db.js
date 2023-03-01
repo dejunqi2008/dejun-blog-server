@@ -1,16 +1,15 @@
-const env = process.env.NODE_ENV  // 环境参数
+const env = process.env.NODE_ENV
 const db_host = process.env.DB_HOST;
 const db_user = process.env.DB_USER;
 const db_password = process.env.DB_PASSWORD;
 const db_name = process.env.DB_NAME;
 
-const localCredentials = require('./localCredentials')
-
-// 配置
+// Config
 let MYSQL_CONF
 let REDIS_CONF
 
 if (env === 'dev') {
+    const localCredentials = require('./localCredentials')
     MYSQL_CONF = {
         host: localCredentials.DB_HOST,
         user: localCredentials.DB_USER,

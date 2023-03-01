@@ -63,41 +63,38 @@
             return result
         }
 
-        // 获取 dom 元素
         const $container = $('#blog-container')
 
-        // 拼接接口 url
         let url = '/api/blog/list'
         const urlParams = getUrlParams()
         if (urlParams.author) {
             url += '?author=' + urlParams.author
         }
+        
+        get(url)
+            .then(resp => resp.json())
+            .then(jsonData => {
+                console.log(jsonData);
+                const { data } = jsonData;
+                if (!data) return;
 
-        // 加载数据
-        get(url).then((res) => {
-            if (res.errno !== 0) {
-                alert('数据错误')
-                return
-            }
-
-            // 遍历博客列表，并显示
-            const data = res.data || []
-            data.forEach(item => {
-                $container.append($(`
-                    <div class="title-wrapper">
-                        <p class="title">
-                        <a href="/detail.html?id=${item.id || item._id}" target="_blank">${item.title}</a>
-                        </p>
-                        <div class="info-wrapper">
-                            <span>
-                                <a href="/index.html?author=${item.author}">${item.author}</a>
-                            </span>
-                            <span>${getFormatDate(item.createdAt)}</span>
+                data.forEach(item => {
+                    $container.append($(`
+                        <div class="title-wrapper">
+                            <p class="title">
+                            <a href="/detail.html?id=${item.id || item._id}" target="_blank">${item.title}</a>
+                            </p>
+                            <div class="info-wrapper">
+                                <span>
+                                    <a href="/index.html?author=${item.author}">${item.author}</a>
+                                </span>
+                                <span>${getFormatDate(item.createdAt)}</span>
+                            </div>
                         </div>
-                    </div>
-                `))
+                    `))
+                })
             })
-        })
+
     </script>
 </body>
 </html>

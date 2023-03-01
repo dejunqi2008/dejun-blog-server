@@ -82,18 +82,6 @@
 
         const urlParams = getUrlParams()
         const url = '/api/blog/detail?id=' + urlParams.id
-        // get(url).then(res => {
-        //     if (res.errno !== 0) {
-        //         alert('Something went wrong')
-        //         return
-        //     }
-
-
-        //     const data = res.data || {}
-        //     $textTitle.val(data.title)
-        //     $textContent.val(data.content)
-        //     $btnUpdate.attr('data-id', data.id || data._id)
-        // })
         get(url)
         .then(resp => resp.json())
         .then(jsonData => {

@@ -96,6 +96,9 @@
             .then(resp => resp.json())
             .then(response => {
                 console.log(response)
+                if (response.errno != 0) {
+                    return;
+                }
                 response.data.forEach(item => {
                     $tableContainer.append($(`
                         <tr>
@@ -115,13 +118,13 @@
             })
             .catch(err => alert(err));
 
-        // 搜索
+        // Search
         $btnSearch.click(() => {
             const keyword = $textKeyword.val()
             location.href = '/admin.html?keyword=' + keyword
         })
 
-        // 删除
+        // Delete
         $tableContainer.click(e => {
             const $target = $(e.target)
             if ($target.hasClass('item-del') === false) {
