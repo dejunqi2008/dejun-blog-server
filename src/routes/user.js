@@ -37,4 +37,3 @@ router.post('/loggedIn', loginCheck, (req, res, next) => {
 });
 
 module.exports = router;
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZ…4NDZ9.y3zYg6dLh2hYBb0mcTQlatSZMKJif4ok5n7TLiy-nlA
