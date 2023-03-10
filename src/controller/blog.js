@@ -15,14 +15,13 @@ const getList = (author, keyword) => {
     return exec(sql)
 }
 
-const getDetail = (id) => {
+const getDetail = async (id) => {
     const sql = `SELECT * FROM blogs where id='${id}'`
-    return exec(sql).then(rows => {
-        return rows[0]
-    })
+    const rows = await exec(sql)
+    return rows[0]
 }
 
-const newBlog = (blogData = {}) => {
+const newBlog = async (blogData = {}) => {
     const title = xss(blogData.title)
     const content = xss(blogData.content)
     const author = blogData.author
@@ -33,14 +32,13 @@ const newBlog = (blogData = {}) => {
         values ('${title}', '${content}', ${createTime}, '${author}');
     `
 
-    return exec(sql).then(insertData => {
-        return {
-            id: insertData.insertId
-        }
-    })
+    const insertData = await exec(sql)
+    return {
+        id: insertData.insertId
+    }
 }
 
-const updateBlog = (id, blogData = {}) => {
+const updateBlog = async (id, blogData = {}) => {
 
     const title = xss(blogData.title)
     const content = xss(blogData.content)
@@ -49,22 +47,20 @@ const updateBlog = (id, blogData = {}) => {
         UPDATE blogs SET title='${title}', content='${content}' WHERE id=${id}
     `
 
-    return exec(sql).then(updateData => {
-        if (updateData.affectedRows > 0) {
-            return true
-        }
-        return false
-    })
+    const updateData = await exec(sql)
+    if (updateData.affectedRows > 0) {
+        return true
+    }
+    return false
 }
 
-const delBlog = (id, author) => {
+const delBlog = async (id, author) => {
     const sql = `DELETE FROM blogs WHERE id='${id}' AND author='${author}';`
-    return exec(sql).then(delData => {
-        if (delData.affectedRows > 0) {
-            return true
-        }
-        return false
-    })
+    const delData = await exec(sql)
+    if (delData.affectedRows > 0) {
+        return true
+    }
+    return false
 }
 
 module.exports = {

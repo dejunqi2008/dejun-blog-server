@@ -1,21 +1,41 @@
 const express = require('express');
-const { login, cookieMaxAge } = require('../controller/user');
+const { login, getUser, updateUser, signup } = require('../controller/user');
 const loginCheck = require('../middlewares/loginCheck');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 const router = express.Router();
 
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
 const { generateAccessToken } = require('../utils/cryp');
 
-router.post('/login', (req, res, next) => {
+router.get('/', (req, res, next) => {
+    console.log(req.query);
+    const username = req.query.username;
+    if (!username) return res.json(new ErrorModel("Username is not provided in query string"));
+
+    const result = getUser(username);
+    return result.then(data => res.json(new SuccessModel(data)));
+})
+
+router.post('/update', loginCheck, async (req, res, next) => {
+    const result = updateUser(req.body);
+    const data = await result;
+    return res.json(new SuccessModel(data));
+    
+})
+
+router.post('/new', async (req, res, next) => {
+    console.log(req.body);
+    const data = await signup(req.body);
+    const {success, message} = data;
+    return success ? res.json(new SuccessModel()) : res.json(new ErrorModel(message));
+})
+
+
+router.post('/login', async (req, res, next) => {
 
     const { username, password } = req.body;
     const result = login(username, password);
-
-    
-    return result.then(data => {
-        if (data.username) {
+    const data = await result;
+    if (data.username) {
             const {username, realname} = data;
             req.session.username = username;
             req.session.realname = realname;
@@ -26,7 +46,6 @@ router.post('/login', (req, res, next) => {
             }));
         }
         return res.json(new ErrorModel('Login failed'));
-    });
 });
 
 router.post('/loggedIn', loginCheck, (req, res, next) => {
