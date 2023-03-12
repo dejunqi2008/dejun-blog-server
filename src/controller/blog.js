@@ -39,7 +39,6 @@ const newBlog = async (blogData = {}) => {
 }
 
 const updateBlog = async (id, blogData = {}) => {
-
     const title = xss(blogData.title)
     const content = xss(blogData.content)
 
