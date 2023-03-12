@@ -44,7 +44,7 @@ router.post('/new', loginCheck, (req, res, next) => {
 router.post('/update', loginCheck, (req, res, next) => {
     const resp = updateBlog(req.query.id, req.body);
     return resp.then(val => {
-        return !!val ? res.json(new SuccessModel()) : res.json(new ErrorModel('Error'));
+        return !!val ? res.json(new SuccessModel({id: req.query.id})) : res.json(new ErrorModel('Error'));
     })
 });
 
