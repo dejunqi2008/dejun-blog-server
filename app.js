@@ -18,7 +18,7 @@ require('dotenv').config()
 const app = express();
 
 app.use(cors({
-    origin: "*",
+    origin: whitelistDomains,
     methods: whitelistMethods,
     credentials: true
 }));
