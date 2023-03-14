@@ -1,5 +1,8 @@
 const { exec, escape } = require('../db/mysql')
 const { genPassword } = require('../utils/cryp')
+const multer = require('multer');
+
+const upload = multer({dest: 'public/'})
 
 
 const validateUsername = async (username) => {
@@ -34,7 +37,6 @@ const signup = async ({username, password, realname}) => {
             VALUES (${username}, ${password}, '${realname}')
     `
 
-    console.log('sql is ', sql);
     const resp = await exec(sql);
     const success =  resp.affectedRows > 0;
     const message = success ? '' : 'Unknown error'
@@ -42,13 +44,12 @@ const signup = async ({username, password, realname}) => {
 } 
 
 const login = async (username, password) => {
-
     username = escape(username)
     password = genPassword(password)
     password = escape(password)
 
     const sql = `
-        SELECT username, realname FROM users WHERE username=${username} and password=${password}
+        SELECT id, username, realname FROM users WHERE username=${username} and password=${password}
     `
     const rows = await exec(sql)
     return rows[0] || {}
@@ -57,11 +58,12 @@ const login = async (username, password) => {
 
 const getUser = async (username) => {
     username = escape(username);
-    const columns = 'username, realname, id, introduction, isadmin, emailaddr, linkedinaddr, githubaddr'
+    const columns = 'username, realname, id, introduction, isadmin, emailaddr, linkedinaddr, githubaddr, profilephoto'
     const sql = `
         SELECT ${columns} FROM users WHERE username=${username}
     `
     const rows = await exec(sql)
+    console.log(rows[0]);
     return rows[0] || {}
 }
 

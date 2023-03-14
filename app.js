@@ -9,6 +9,7 @@ const cors = require('cors');
 const indexRouter = require('./src/routes/index');
 const blogRouter = require('./src/routes/blog');
 const userRouter = require('./src/routes/user');
+const imageRouter = require('./src/routes/image')
 const { whitelistDomains, whitelistMethods } = require('./src/utils/corsUtil');
 const { cookieMaxAge } = require('./src/controller/user');
 require('dotenv').config()
@@ -16,15 +17,15 @@ require('dotenv').config()
 
 const app = express();
 
-
 app.use(cors({
-    origin: whitelistDomains,
+    origin: "*",
     methods: whitelistMethods,
     credentials: true
 }));
 app.use(logger('dev'));
 app.use(express.json()); // requestion information are converted to json into body
 app.use(express.urlencoded({ extended: false }));
+
 app.use(cookieParser());
 
 app.use(session({
@@ -42,6 +43,7 @@ app.use(session({
 app.use('/', indexRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/user', userRouter);
+app.use('/api/images', imageRouter);
 
 
 // catch 404 and forward to error handler
