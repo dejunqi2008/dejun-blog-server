@@ -11,13 +11,17 @@ class BaseModel {
         if (message) {
             this.message = message
         }
+        this.metadata = null;
     }
 }
 
 class SuccessModel extends BaseModel {
-    constructor(data, message) {
-        super(data, message)
+    constructor(data, metadata, message) {
+        super(data, message, metadata)
         this.errno = 0
+        if (metadata) {
+            this.metadata = metadata;
+        }
     }
 }
 

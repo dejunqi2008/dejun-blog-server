@@ -1,5 +1,5 @@
 const preProcessTextContent = (str) => {
-    return str.replace("\n", "<p></p>");
+    return str.replace('p', 'div').replace("\n", "<p></p>");
 }
 
 module.exports = {
