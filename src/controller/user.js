@@ -8,7 +8,7 @@ const upload = multer({dest: 'public/'})
 const validateUsername = async (username) => {
     const sql = `SELECT username FROM users`;
     const resp = await exec(sql);
-    // resp.forEach(item => console.log(item.username));
+
     const res = resp.find(item => item.username === username)
     if (res) {
         return false;
@@ -20,7 +20,6 @@ const validateUsername = async (username) => {
 
 const signup = async ({username, password, realname}) => {
     const valid = await validateUsername(username);
-    console.log(valid);
     if (!valid) {
         return {success: false, message: 'Username was already taken'};
     }
@@ -63,7 +62,6 @@ const getUser = async (username) => {
         SELECT ${columns} FROM users WHERE username=${username}
     `
     const rows = await exec(sql)
-    console.log(rows[0]);
     return rows[0] || {}
 }
 
@@ -74,16 +72,18 @@ const updateUser = async (requestBody) => {
         emailaddr,
         githubaddr,
         linkedinaddr,
-        introduction
+        introduction,
+        profilephoto
     } = requestBody;
+
+    const photosql = !!profilephoto ? `, profilephoto='${profilephoto}'` : ''
+
     const sql = `
         UPDATE users SET realname='${realname}',
             emailaddr='${emailaddr}',
             githubaddr='${githubaddr}',
             linkedinaddr='${linkedinaddr}',
-            introduction='${introduction}'
-        WHERE username=${escape(username)}
-    `
+            introduction='${introduction}' ` + photosql + ` WHERE username=${escape(username)}`
 
     console.log('updateUser is: ', sql);
     const updateData = await exec(sql);

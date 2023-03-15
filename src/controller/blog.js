@@ -1,5 +1,6 @@
 const xss = require('xss')
 const { exec } = require('../db/mysql')
+const { preProcessTextContent } = require('../utils/commonUtils');
 
 // TODO: pagination using previois fetched Id
 const getList = (author, keyword) => {
@@ -23,7 +24,7 @@ const getDetail = async (id) => {
 
 const newBlog = async (blogData = {}) => {
     const title = xss(blogData.title)
-    const content = xss(blogData.content)
+    const content = preProcessTextContent(xss(blogData.content));
     const author = blogData.author
     const createTime = Date.now()
 
@@ -31,6 +32,8 @@ const newBlog = async (blogData = {}) => {
         INSERT INTO blogs (title, content, createtime, author)
         values ('${title}', '${content}', ${createTime}, '${author}');
     `
+
+    console.log('sql is ', sql);
 
     const insertData = await exec(sql)
     return {
