@@ -1,8 +1,9 @@
-const xss = require('xss')
+const xss = require('xss');
 const { exec } = require('../db/mysql')
 const { preProcessTextContent } = require('../utils/commonUtils');
 
-// TODO: pagination using previois fetched Id
+const LIMIT = 5;
+
 const getList = (author, keyword) => {
     let sql = `SELECT * FROM blogs WHERE 1=1 `
     if (author) {
@@ -11,9 +12,29 @@ const getList = (author, keyword) => {
     if (keyword) {
         sql += `AND title like '%${keyword}%' `
     }
-    sql += `ORDER BY createtime desc LIMIT 20;`
+    sql += `ORDER BY createtime DESC LIMIT 20;`
 
     return exec(sql)
+}
+
+const getListV2 = async (page, author, keyword) => {
+
+    const offset = (page - 1) * LIMIT;
+    // SELECT * FROM myblog.blogs ORDER BY createtime DESC LIMIT 5 OFFSET 0
+    let sql = `SELECT * FROM blogs WHERE author='${author}' `;
+    if (keyword) {
+        sql += `AND title like '%${keyword}%' `
+    }
+    sql += `ORDER BY createtime DESC LIMIT ${LIMIT} OFFSET ${offset}`
+    const rows = await exec(sql)
+    return rows;
+}
+
+const getCounts = async (author, keyword) => {
+    const searchKeywordQuery = !!keyword ? ` AND title like '%${keyword}%' ` : '';
+    const sql = `SELECT count(id) FROM blogs WHERE author='${author}'` + searchKeywordQuery;
+    const countRes = await exec(sql);
+    return countRes[0]['count(id)'];
 }
 
 const getDetail = async (id) => {
@@ -32,8 +53,6 @@ const newBlog = async (blogData = {}) => {
         INSERT INTO blogs (title, content, createtime, author)
         values ('${title}', '${content}', ${createTime}, '${author}');
     `
-
-    console.log('sql is ', sql);
 
     const insertData = await exec(sql)
     return {
@@ -67,8 +86,11 @@ const delBlog = async (id, author) => {
 
 module.exports = {
     getList,
+    getListV2,
     getDetail,
     newBlog,
     updateBlog,
-    delBlog
+    delBlog,
+    getCounts,
+    LIMIT
 }

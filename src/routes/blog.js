@@ -3,30 +3,34 @@ const router = express.Router();
 
 const {
     getList,
+    getListV2,
     getDetail,
     newBlog,
     updateBlog,
-    delBlog
+    delBlog,
+    getCounts,
+    LIMIT
 } = require('../controller/blog');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 const  loginCheck  = require('../middlewares/loginCheck');
 
 
-router.get('/list', (req, res, next) => {
+router.get('/list', async (req, res, next) => {
     let author = req.query.author || '';
     const keyword = req.query.keyword || '';
-    if (req.query.isadmin) {
-        if (!req.session.username) {
-            return res.json(new ErrorModel('You are not login yet.'));
-        }
-        author = req.session.username;
-    }
-
-    const result = getList(author, keyword);
-    return result.then(listData => {
-        res.json(new SuccessModel(listData));
-    });
+    const listData = await getList(author, keyword);
+    res.json(new SuccessModel(listData));
 });
+
+router.get(`/listv2`, async (req, res, next) => {
+    let author = req.query.author || '';
+    const keyword = req.query.keyword || '';
+    const page = parseInt((req.query.page || '1'));
+    let resp = await getListV2(page, author, keyword)
+    let totalRecords = await getCounts(author, keyword);
+    const numOfPages = Math.ceil((totalRecords / LIMIT));
+    res.json(new SuccessModel(resp, {totalRecords, numOfPages}))
+})
 
 router.get('/detail', (req, res, next) => {
     const result = getDetail(req.query.id);
