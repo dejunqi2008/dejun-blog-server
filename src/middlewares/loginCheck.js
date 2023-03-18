@@ -15,8 +15,6 @@ const loginCheck = (req, res, next) => {
         req.session.realname = realname;
         next();
     })
-
-
 }
 
 module.exports = loginCheck;

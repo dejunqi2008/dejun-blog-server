@@ -9,7 +9,9 @@ const cors = require('cors');
 const indexRouter = require('./src/routes/index');
 const blogRouter = require('./src/routes/blog');
 const userRouter = require('./src/routes/user');
-const imageRouter = require('./src/routes/image')
+const imageRouter = require('./src/routes/image');
+const tagRouter = require('./src/routes/tag');
+const associateRouter = require('./src/routes/associate')
 const { whitelistDomains, whitelistMethods } = require('./src/utils/corsUtil');
 const { cookieMaxAge } = require('./src/controller/user');
 require('dotenv').config()
@@ -44,6 +46,8 @@ app.use('/', indexRouter);
 app.use('/api/blog', blogRouter);
 app.use('/api/user', userRouter);
 app.use('/api/images', imageRouter);
+app.use('/api/tags', tagRouter);
+app.use('/api/associatetag', associateRouter)
 
 
 // catch 404 and forward to error handler
