@@ -8,7 +8,8 @@ const {
     newBlog,
     updateBlog,
     delBlog,
-    getCounts,
+    getTotalBlogNumber,
+    getTotalBlogNumberWithTag,
     LIMIT
 } = require('../controller/blog');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
@@ -17,9 +18,12 @@ const  loginCheck  = require('../middlewares/loginCheck');
 
 router.get('/list', async (req, res, next) => {
     let author = req.query.author || '';
-    const keyword = req.query.keyword || '';
-    const listData = await getList(author, keyword);
-    res.json(new SuccessModel(listData));
+    const tagname = req.query.tagname || '';
+    const page = parseInt(req.query.page || '1')
+    const listData = await getList(author, page, tagname);
+    let totalRecords = await getTotalBlogNumberWithTag(tagname);
+    const numOfPages = Math.ceil((totalRecords / LIMIT));
+    res.json(new SuccessModel(listData, {totalRecords, numOfPages}));
 });
 
 router.get(`/listv2`, async (req, res, next) => {
@@ -27,7 +31,7 @@ router.get(`/listv2`, async (req, res, next) => {
     const keyword = req.query.keyword || '';
     const page = parseInt((req.query.page || '1'));
     let resp = await getListV2(page, author, keyword)
-    let totalRecords = await getCounts(author, keyword);
+    let totalRecords = await getTotalBlogNumber(author, keyword);
     const numOfPages = Math.ceil((totalRecords / LIMIT));
     res.json(new SuccessModel(resp, {totalRecords, numOfPages}))
 })
@@ -58,5 +62,6 @@ router.post('/delete', loginCheck, (req, res, next) => {
         return !!val ? res.json(new SuccessModel()) : res.json(new ErrorModel('Error'));
     });
 });
+
 
 module.exports = router;

@@ -4,23 +4,26 @@ const { preProcessTextContent } = require('../utils/commonUtils');
 
 const LIMIT = 5;
 
-const getList = (author, keyword) => {
-    let sql = `SELECT * FROM blogs WHERE 1=1 `
-    if (author) {
-        sql += `AND author='${author}' `
+const getList = async (author, page, tagname) => {
+    let sql = `SELECT id FROM tags WHERE tagname='${tagname}';`
+    let result = await exec(sql);
+    const tag_id = result[0].id;
+    const offset = (page - 1) * LIMIT;
+    sql = `SELECT blog_id FROM blog_tag WHERE tag_id='${tag_id}' LIMIT ${LIMIT} OFFSET ${offset}`
+    const ids = (await exec(sql)).map(obj => obj.blog_id);
+    console.log(ids);
+    if (ids.length > 0) {
+        sql = `
+            SELECT * FROM blogs WHERE author='${author}' AND id IN (${ids});
+        `
+        return await exec(sql);
+    } else {
+        return [];
     }
-    if (keyword) {
-        sql += `AND title like '%${keyword}%' `
-    }
-    sql += `ORDER BY createtime DESC LIMIT 20;`
-
-    return exec(sql)
 }
 
 const getListV2 = async (page, author, keyword) => {
-
     const offset = (page - 1) * LIMIT;
-    // SELECT * FROM myblog.blogs ORDER BY createtime DESC LIMIT 5 OFFSET 0
     let sql = `SELECT * FROM blogs WHERE author='${author}' `;
     if (keyword) {
         sql += `AND title like '%${keyword}%' `
@@ -30,12 +33,23 @@ const getListV2 = async (page, author, keyword) => {
     return rows;
 }
 
-const getCounts = async (author, keyword) => {
+const getTotalBlogNumber = async (author, keyword) => {
     const searchKeywordQuery = !!keyword ? ` AND title like '%${keyword}%' ` : '';
     const sql = `SELECT count(id) FROM blogs WHERE author='${author}'` + searchKeywordQuery;
     const countRes = await exec(sql);
     return countRes[0]['count(id)'];
 }
+
+
+const getTotalBlogNumberWithTag = async (tagname) => {
+    let sql = `SELECT id FROM tags WHERE tagname='${tagname}';`
+    let result = await exec(sql);
+    const tag_id = result[0].id;
+    sql = `SELECT count(id) FROM blog_tag WHERE tag_id=${tag_id};`
+    const countRes = await exec(sql);
+    return countRes[0]['count(id)'];
+}
+
 
 const getDetail = async (id) => {
     const sql = `SELECT * FROM blogs where id='${id}'`
@@ -91,6 +105,7 @@ module.exports = {
     newBlog,
     updateBlog,
     delBlog,
-    getCounts,
+    getTotalBlogNumber,
+    getTotalBlogNumberWithTag,
     LIMIT
 }
