@@ -1,6 +1,6 @@
 const xss = require('xss');
-const { exec } = require('../db/mysql')
-const { preProcessTextContent } = require('../utils/commonUtils');
+const { exec, escape } = require('../db/mysql')
+const { preProcessTextContent, mysql_real_escape_string } = require('../utils/commonUtils');
 
 const LIMIT = 5;
 
@@ -59,13 +59,15 @@ const getDetail = async (id) => {
 
 const newBlog = async (blogData = {}) => {
     const title = xss(blogData.title)
-    const content = preProcessTextContent(xss(blogData.content));
+    const content = xss(mysql_real_escape_string(blogData.content));
     const author = blogData.author
+    const markdown = !!blogData.useMarkDown ? 1 : 0;
     const createTime = Date.now()
-
+    console.log('useMarkdown', markdown);
+    
     const sql = `
-        INSERT INTO blogs (title, content, createtime, author)
-        values ('${title}', '${content}', ${createTime}, '${author}');
+        INSERT INTO blogs (title, content, createtime, author, markdown)
+        values ('${title}', '${content}', ${createTime}, '${author}', '${markdown}');
     `
 
     const insertData = await exec(sql)
@@ -76,11 +78,9 @@ const newBlog = async (blogData = {}) => {
 
 const updateBlog = async (id, blogData = {}) => {
     const title = xss(blogData.title)
-    const content = xss(blogData.content)
+    const content = xss(mysql_real_escape_string(blogData.content));
 
-    const sql = `
-        UPDATE blogs SET title='${title}', content='${content}' WHERE id=${id}
-    `
+    const sql = `UPDATE blogs SET title='${title}', content='${content}' WHERE id=${id}`
 
     const updateData = await exec(sql)
     if (updateData.affectedRows > 0) {

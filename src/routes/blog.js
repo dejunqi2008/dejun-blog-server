@@ -45,6 +45,7 @@ router.get('/detail', (req, res, next) => {
 
 router.post('/new', loginCheck, (req, res, next) => {
     req.body.author = req.session.username;
+    console.log(req.body);
     const result = newBlog(req.body);
     return result.then(data => res.json(new SuccessModel(data)));
 })
