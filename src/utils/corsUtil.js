@@ -1,5 +1,5 @@
 const whitelistDomains = [
-    'https://dejun-blog-client.herokuapp.com',
+    // 'https://dejun-blog-client.herokuapp.com',
     'http://localhost:3000',
     'https://www.dejun-cms.com/'
 ];
