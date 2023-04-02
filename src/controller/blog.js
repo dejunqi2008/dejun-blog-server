@@ -61,13 +61,11 @@ const newBlog = async (blogData = {}) => {
     const title = xss(blogData.title)
     const content = xss(mysql_real_escape_string(blogData.content));
     const author = blogData.author
-    const markdown = !!blogData.useMarkDown ? 1 : 0;
-    const createTime = Date.now()
-    console.log('useMarkdown', markdown);
+    const createTime = Date.now();
     
     const sql = `
-        INSERT INTO blogs (title, content, createtime, author, markdown)
-        values ('${title}', '${content}', ${createTime}, '${author}', '${markdown}');
+        INSERT INTO blogs (title, content, createtime, author)
+        values ('${title}', '${content}', ${createTime}, '${author}');
     `
 
     const insertData = await exec(sql)
