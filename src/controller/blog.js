@@ -11,12 +11,16 @@ const getList = async (author, page, tagname) => {
     const offset = (page - 1) * LIMIT;
     sql = `SELECT blog_id FROM blog_tag WHERE tag_id='${tag_id}' LIMIT ${LIMIT} OFFSET ${offset}`
     const ids = (await exec(sql)).map(obj => obj.blog_id);
-    console.log(ids);
+
     if (ids.length > 0) {
         sql = `
             SELECT * FROM blogs WHERE author='${author}' AND id IN (${ids});
         `
-        return await exec(sql);
+        const resp = await exec(sql);
+        if (resp.error) {
+            return [];
+        }
+        return resp;
     } else {
         return [];
     }
@@ -68,9 +72,11 @@ const newBlog = async (blogData = {}) => {
         values ('${title}', '${content}', ${createTime}, '${author}');
     `
 
-    const insertData = await exec(sql)
+    const response = await exec(sql)
+    console.log(response);
+
     return {
-        id: insertData.insertId
+        id: response.insertId
     }
 }
 

@@ -9,17 +9,38 @@ const pool = mysql.createPool({
 
 // con.connect()
 
-function exec(sql) {
-    const promise = new Promise((resolve, reject) => {
+// function exec(sql) {
+//     const promise = new Promise((resolve, reject) => {
+//         pool.query(sql, (err, result) => {
+//             if (err) {
+//                 reject(err)
+//                 return
+//             }
+//             resolve(result)
+//         })
+//     })
+//     return promise
+// }
+
+const query = (sql) => {
+    return new Promise((resolve, reject) => {
         pool.query(sql, (err, result) => {
             if (err) {
-                reject(err)
-                return
+                return reject(err);
             }
-            resolve(result)
+            return resolve(result);
         })
-    })
-    return promise
+    });
+}
+
+const exec = async (sql) => {
+    let res = null
+    try {
+        res = await query(sql);
+    } catch (err) {
+        res = { error: err };
+    }
+    return res;
 }
 
 
