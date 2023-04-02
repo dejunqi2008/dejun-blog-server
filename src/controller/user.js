@@ -1,5 +1,6 @@
 const { exec, escape } = require('../db/mysql')
 const { genPassword } = require('../utils/cryp')
+const { mysql_real_escape_string } = require('../utils/commonUtils');
 const multer = require('multer');
 
 const upload = multer({dest: 'public/'})
@@ -83,9 +84,8 @@ const updateUser = async (requestBody) => {
             emailaddr='${emailaddr}',
             githubaddr='${githubaddr}',
             linkedinaddr='${linkedinaddr}',
-            introduction='${introduction}' ` + photosql + ` WHERE username=${escape(username)}`
+            introduction='${mysql_real_escape_string(introduction)}' ` + photosql + ` WHERE username=${escape(username)}`
 
-    console.log('updateUser is: ', sql);
     const updateData = await exec(sql);
     return updateData.affectedRows > 0;
 }

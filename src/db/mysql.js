@@ -22,6 +22,7 @@ function exec(sql) {
     return promise
 }
 
+
 module.exports = {
     exec,
     escape: mysql.escape

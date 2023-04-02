@@ -3,7 +3,7 @@ const preProcessTextContent = (str) => {
 }
 
 const mysql_real_escape_string = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+    return str.replaceAll(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -28,6 +28,7 @@ const mysql_real_escape_string = (str) => {
         }
     });
 }
+
 
 module.exports = {
     preProcessTextContent,

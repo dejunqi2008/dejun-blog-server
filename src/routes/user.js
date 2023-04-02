@@ -7,7 +7,6 @@ const router = express.Router();
 const { generateAccessToken } = require('../utils/cryp');
 
 router.get('/', (req, res, next) => {
-    console.log(req.query);
     const username = req.query.username;
     if (!username) return res.json(new ErrorModel("Username is not provided in query string"));
 
