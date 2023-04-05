@@ -62,7 +62,7 @@ const getDetail = async (id) => {
 }
 
 const newBlog = async (blogData = {}) => {
-    const title = xss(blogData.title)
+    const title = xss(mysql_real_escape_string(blogData.title));
     const content = xss(mysql_real_escape_string(blogData.content));
     const author = blogData.author
     const createTime = Date.now();
@@ -81,7 +81,7 @@ const newBlog = async (blogData = {}) => {
 }
 
 const updateBlog = async (id, blogData = {}) => {
-    const title = xss(blogData.title)
+    const title = xss(mysql_real_escape_string(blogData.title));
     const content = xss(mysql_real_escape_string(blogData.content));
 
     const sql = `UPDATE blogs SET title='${title}', content='${content}' WHERE id=${id}`
