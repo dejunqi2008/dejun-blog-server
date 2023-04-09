@@ -20,6 +20,7 @@ const getList = async (author, page, tagname) => {
         if (resp.error) {
             return [];
         }
+        resp.sort((a, b) => b.createtime - a.createtime);
         return resp;
     } else {
         return [];
@@ -73,7 +74,6 @@ const newBlog = async (blogData = {}) => {
     `
 
     const response = await exec(sql)
-    console.log(response);
 
     return {
         id: response.insertId
