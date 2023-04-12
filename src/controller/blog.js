@@ -2,7 +2,7 @@ const xss = require('xss');
 const { exec, escape } = require('../db/mysql')
 const { preProcessTextContent, mysql_real_escape_string } = require('../utils/commonUtils');
 
-const LIMIT = 5;
+const LIMIT = 8;
 
 const getList = async (author, page, tagname) => {
     let sql = `SELECT id FROM tags WHERE tagname='${tagname}';`
