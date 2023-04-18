@@ -1,6 +1,4 @@
-const preProcessTextContent = (str) => {
-    return str.replace('p', 'div').replace("\n", "<p></p>");
-}
+const {exec} = require('../db/mysql')
 
 const mysql_real_escape_string = (str) => {
     return str.replaceAll(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
@@ -29,8 +27,11 @@ const mysql_real_escape_string = (str) => {
     });
 }
 
+const getUserId = (username) => {
+    return exec(`SELECT id FROM users WHERE username='${username}';`);
+}
 
 module.exports = {
-    preProcessTextContent,
-    mysql_real_escape_string
+    mysql_real_escape_string,
+    getUserId
 }

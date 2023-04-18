@@ -3,9 +3,6 @@ const { genPassword } = require('../utils/cryp')
 const { mysql_real_escape_string } = require('../utils/commonUtils');
 const multer = require('multer');
 
-const upload = multer({dest: 'public/'})
-
-
 const validateUsername = async (username) => {
     const sql = `SELECT username FROM users`;
     const resp = await exec(sql);

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session')
 const cors = require('cors');
+var boom = require('express-boom');
 
 const indexRouter = require('./src/routes/index');
 const blogRouter = require('./src/routes/blog');
@@ -12,6 +13,8 @@ const userRouter = require('./src/routes/user');
 const imageRouter = require('./src/routes/image');
 const tagRouter = require('./src/routes/tag');
 const associateRouter = require('./src/routes/associate')
+const albumRouter = require('./src/routes/album');
+
 const { whitelistDomains, whitelistMethods } = require('./src/utils/corsUtil');
 const { cookieMaxAge } = require('./src/controller/user');
 require('dotenv').config()
@@ -27,6 +30,7 @@ app.use(cors({
 app.use(logger('dev'));
 app.use(express.json()); // requestion information are converted to json into body
 app.use(express.urlencoded({ extended: false }));
+app.use(boom());
 
 app.use(cookieParser());
 
@@ -47,7 +51,8 @@ app.use('/api/blog', blogRouter);
 app.use('/api/user', userRouter);
 app.use('/api/images', imageRouter);
 app.use('/api/tags', tagRouter);
-app.use('/api/associatetag', associateRouter)
+app.use('/api/associatetag', associateRouter);
+app.use('/api/albums', albumRouter);
 
 
 // catch 404 and forward to error handler
