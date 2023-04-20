@@ -1,6 +1,6 @@
 const xss = require('xss');
-const { exec, escape } = require('../db/mysql')
-const { preProcessTextContent, mysql_real_escape_string } = require('../utils/commonUtils');
+const { exec } = require('../db/mysql')
+const { mysql_real_escape_string } = require('../utils/commonUtils');
 
 const LIMIT = 8;
 

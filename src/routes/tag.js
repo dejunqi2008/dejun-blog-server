@@ -4,7 +4,6 @@ const { createTag, getTags } = require('../controller/tag');
 
 router.get('/', async (req, res, next) => {
     const { query } = req;
-    console.log(query);
     const result = await getTags(query.blog_id);
     return res.json(result);
 })

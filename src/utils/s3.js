@@ -2,7 +2,7 @@ const { Upload } = require("@aws-sdk/lib-storage"),
       { S3 } = require("@aws-sdk/client-s3/");
 const fs = require('fs');
 
-const s3MethodFactor = (fucName) => {
+const s3MethodFactory = (fucName) => {
     let s3;
     if (!s3) {
         s3 = new S3({
@@ -16,14 +16,14 @@ const s3MethodFactor = (fucName) => {
         console.log('Using cached s3 instance')
     }
 
-    const uploadFile = (file) => {
+    const uploadFile = (file, username) => {
 
         const fileStream = fs.createReadStream(file.path)
     
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Body: fileStream,
-            Key: file.filename
+            Key: username + '/' + file.filename,
         }
     
         return new Upload({
@@ -33,6 +33,7 @@ const s3MethodFactor = (fucName) => {
     };
 
     const getFileStream = (filekey) => {
+        console.log('filekey', filekey);
         return s3.getObject({
             Key: filekey,
             Bucket: process.env.AWS_BUCKET_NAME
@@ -49,5 +50,5 @@ const s3MethodFactor = (fucName) => {
 }
 
 module.exports = {
-    s3MethodFactor
+    s3MethodFactory
 }
