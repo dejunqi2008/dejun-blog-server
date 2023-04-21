@@ -39,11 +39,19 @@ const s3MethodFactory = (fucName) => {
             Bucket: process.env.AWS_BUCKET_NAME
         })
     };
+
+    const createFolder = (username) => {
+        return s3.putObject({
+            Key: `${username}/`,
+            Bucket: process.env.AWS_BUCKET_NAME
+        })
+    }
     
 
     const mapping = {
         uploadFile,
-        getFileStream
+        getFileStream,
+        createFolder
     }
 
     return mapping[fucName];

@@ -1,6 +1,7 @@
 const express = require('express');
 const { login, getUser, updateUser, signup } = require('../controller/user');
 const loginCheck = require('../middlewares/loginCheck');
+const { s3MethodFactory } = require('../utils/s3');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 const router = express.Router();
 
@@ -23,9 +24,18 @@ router.post('/update', loginCheck, async (req, res, next) => {
 
 router.post('/new', async (req, res, next) => {
     console.log(req.body);
-    const data = await signup(req.body);
-    const {success, message} = data;
-    return success ? res.json(new SuccessModel()) : res.json(new ErrorModel(message));
+    let error = null;
+    try {
+        const data = await signup(req.body);
+        const {success, message} = data;
+        if (success) {
+            const {username} = req.body;
+            await s3MethodFactory('createFolder')(username);
+        }
+    } catch (err) {
+        error = err;
+    }
+    return !!error ? res.json(new SuccessModel()) : res.json(new ErrorModel(message));
 })
 
 
