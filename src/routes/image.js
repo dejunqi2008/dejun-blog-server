@@ -7,10 +7,11 @@ const unlinkFile = util.promisify(fs.unlinkSync);
 const express = require('express');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 const { addImgaes, getImages } = require('../controller/image');
+const loginCheck = require('../middlewares/loginCheck');
 const router = express.Router();
 
 
-router.post('/profile/new', upload.single('image'), async (req, res, next) => {
+router.post('/profile/new', loginCheck, upload.single('image'), async (req, res, next) => {
 
     const { username } = req.body;
     let resp;
@@ -38,7 +39,7 @@ router.post('/profile/new', upload.single('image'), async (req, res, next) => {
     return res.json(resp);
 });
 
-router.post('/userphotos/new', upload.array('photos', 10), async (req, res, next) => {
+router.post('/userphotos/new', loginCheck, upload.array('photos', 10), async (req, res, next) => {
     const { username, album_id } = req.body;
     let resp;
     try {
