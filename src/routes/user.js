@@ -1,6 +1,6 @@
 const express = require('express');
 const { login, getUser, updateUser, signup } = require('../controller/user');
-const loginCheck = require('../middlewares/loginCheck');
+const { loginCheck } = require('../middlewares/loginCheck');
 const { s3MethodFactory } = require('../utils/s3');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 const router = express.Router();

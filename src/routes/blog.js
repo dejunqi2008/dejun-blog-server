@@ -13,7 +13,7 @@ const {
     LIMIT
 } = require('../controller/blog');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
-const  loginCheck  = require('../middlewares/loginCheck');
+const  { loginCheck } = require('../middlewares/loginCheck');
 
 
 router.get('/list', async (req, res, next) => {

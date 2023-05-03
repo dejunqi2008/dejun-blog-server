@@ -3,7 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const { createAlbum, getAlbums } = require('../controller/album');
-const loginCheck = require('../middlewares/loginCheck');
+const { loginCheck } = require('../middlewares/loginCheck');
 
 router.post('/new', loginCheck, async (req, res, next) => {
     const name = req.body.name;
