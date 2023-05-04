@@ -7,7 +7,7 @@ const unlinkFile = util.promisify(fs.unlinkSync);
 const express = require('express');
 const { SuccessModel, ErrorModel } = require('../model/resModel');
 const { addImgaes, getImages } = require('../controller/image');
-const loginCheck = require('../middlewares/loginCheck');
+const { loginCheck, loginCheckSync } = require('../middlewares/loginCheck');
 const router = express.Router();
 
 
@@ -39,8 +39,12 @@ router.post('/profile/new', loginCheck, upload.single('image'), async (req, res,
     return res.json(resp);
 });
 
-router.post('/userphotos/new', loginCheck, upload.array('photos', 10), async (req, res, next) => {
-    const { username, album_id } = req.body;
+router.post('/userphotos/new', upload.array('photos', 10), async (req, res, next) => {
+    const { username, album_id, accessToken } = req.body;
+    if (!loginCheckSync(req)) {
+        return res.json(new ErrorModel("User is not authenticated"));
+    }
+
     let resp;
     try {
         const promises = req.files.map(file => s3MethodFactory('uploadFile')(file, username));
@@ -58,6 +62,7 @@ router.post('/userphotos/new', loginCheck, upload.array('photos', 10), async (re
             resp = new ErrorModel("Unknow Error, some of your photos was not able to put into our database");
         }
     } catch (err) {
+        console.log(err);
         resp = new ErrorModel(err);
     }
 
