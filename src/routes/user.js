@@ -19,7 +19,7 @@ router.post('/update', loginCheck, async (req, res, next) => {
     const result = updateUser(req.body);
     const data = await result;
     return res.json(new SuccessModel(data));
-    
+
 })
 
 router.post('/new', async (req, res, next) => {

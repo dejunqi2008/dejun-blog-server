@@ -11,7 +11,12 @@ const validateUsername = async (username) => {
         return false;
     }
     return true;
+}
 
+const validateInputStr = async (str) => {
+    const invalid = ['*', 'select', 'delete', 'update', 'get', 'drop'];
+    str = str.toLowerCase();
+    return !invalid.find(s => str.includes(s));
 }
 
 
@@ -37,9 +42,12 @@ const signup = async ({username, password, realname}) => {
     const success =  resp.affectedRows > 0;
     const message = success ? '' : 'Unknown error'
     return {success, message};
-} 
+}
 
 const login = async (username, password) => {
+    if (!validateInputStr(username) || !validateInputStr(password)) {
+        return {};
+    }
     username = escape(username)
     password = genPassword(password)
     password = escape(password)
